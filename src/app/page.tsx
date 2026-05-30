@@ -70,12 +70,21 @@ export default function Home() {
             >
               로그인
             </Link>
-            <Link
-              href="/blog"
-              className="px-5 py-2.5 text-sm font-black rounded-full bg-black text-white hover:bg-slate-800 transition-all shadow-sm"
-            >
-              시작하기
-            </Link>
+            {docAutomation ? (
+              <Link
+                href={`/detail/${docAutomation.id}`}
+                className="px-5 py-2.5 text-sm font-black rounded-full bg-black text-white hover:bg-slate-800 transition-all shadow-sm"
+              >
+                시작하기
+              </Link>
+            ) : (
+              <Link
+                href="/blog"
+                className="px-5 py-2.5 text-sm font-black rounded-full bg-black text-white hover:bg-slate-800 transition-all shadow-sm"
+              >
+                시작하기
+              </Link>
+            )}
           </div>
         </div>
       </header>
@@ -125,7 +134,7 @@ export default function Home() {
                     무료 자동 생성 시스템
                   </span>
                   
-                  <Link href="/blog" className="block group-hover:text-[#818CF8] transition-colors">
+                  <Link href={`/detail/${docAutomation.id}`} className="block group-hover:text-[#818CF8] transition-colors">
                     <h4 className="text-3xl sm:text-4xl font-black tracking-tight leading-tight">
                       {docAutomation.name}
                     </h4>
@@ -156,7 +165,7 @@ export default function Home() {
                   </div>
                   
                   <Link
-                    href="/blog"
+                    href={`/detail/${docAutomation.id}`}
                     className="w-full md:w-auto text-center px-6 py-4 text-sm font-black tracking-wider uppercase rounded-full bg-[#818CF8] text-white hover:bg-[#6366F1] active:scale-95 transition-all duration-200 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/45"
                   >
                     1초 만에 문서 생성 시작하기
@@ -166,6 +175,62 @@ export default function Home() {
             </div>
           </section>
         )}
+
+        {/* ==========================================
+            💰 거래명세표 자동 집계 카드
+            ========================================== */}
+        <section className="space-y-6">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-7 rounded-full bg-gradient-to-b from-[#10B981] to-[#059669]"></span>
+            <h3 className="text-xl sm:text-2xl font-black tracking-tight text-[#0F172A]">
+              현장별 거래명세표 집계 관리
+            </h3>
+          </div>
+
+          <div className="relative group overflow-hidden rounded-[32px] bg-gradient-to-br from-[#022C22] via-[#064E3B] to-[#022C22] p-8 sm:p-12 text-white shadow-2xl shadow-emerald-950/20 border border-emerald-500/20 transition-all duration-500 transform hover:-translate-y-2">
+            <div className="absolute top-[-50%] right-[-10%] w-[400px] h-[400px] rounded-full bg-gradient-to-br from-[#10B981]/30 to-[#059669]/30 blur-[80px] pointer-events-none"></div>
+
+            <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+              <div className="space-y-6 max-w-xl">
+                <span className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-black tracking-widest uppercase rounded-full bg-[#059669] border border-emerald-400/30 text-white shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-[#34D399] animate-ping"></span>
+                  무료 자동 집계 시스템
+                </span>
+
+                <h4 className="text-3xl sm:text-4xl font-black tracking-tight leading-tight">
+                  거래명세표 사진으로<br />자동 비용 집계
+                </h4>
+
+                <p className="text-slate-100 text-base sm:text-lg font-bold leading-relaxed">
+                  현장별 거래명세표 사진을 찍거나 업로드하면 현장별 총 사용 누계, 월별 자재상별 구매·지급 금액을 자동으로 집계합니다.
+                </p>
+
+                <div className="grid grid-cols-2 gap-3 text-sm text-slate-300 font-extrabold pt-2">
+                  <div className="flex items-center gap-2"><span className="text-[#34D399]">📊</span><span>현장별 총 사용 누계</span></div>
+                  <div className="flex items-center gap-2"><span className="text-[#34D399]">📅</span><span>월별 사용 누계</span></div>
+                  <div className="flex items-center gap-2"><span className="text-[#34D399]">🏪</span><span>자재상별 구매 금액</span></div>
+                  <div className="flex items-center gap-2"><span className="text-[#34D399]">💳</span><span>월별 지급해야할 금액</span></div>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center justify-center w-full md:w-auto min-w-[220px] gap-4">
+                <div className="w-28 h-28 rounded-[24px] bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center shadow-lg shadow-emerald-500/30 border border-emerald-400/40 relative group-hover:scale-105 transition-transform duration-300">
+                  <svg className="w-14 h-14 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" />
+                  </svg>
+                  <span className="absolute -top-2 -right-2 text-xl animate-bounce">💰</span>
+                </div>
+
+                <Link
+                  href="/transaction-ledger"
+                  className="w-full md:w-auto text-center px-6 py-4 text-sm font-black tracking-wider uppercase rounded-full bg-[#34D399] text-[#022C22] hover:bg-[#10B981] active:scale-95 transition-all duration-200 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/45"
+                >
+                  거래명세표 집계 시작하기
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* ==========================================
             💼 [정부지원사업 카테고리] 신뢰성 높은 Cobalt Blue 일관된 테마
