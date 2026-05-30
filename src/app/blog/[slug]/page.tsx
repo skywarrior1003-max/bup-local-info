@@ -5,6 +5,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Metadata } from "next";
 import { getPostBySlug, getAllPosts } from "@/lib/posts";
+import AdBanner from "@/components/AdBanner";
+import CoupangBanner from "@/components/CoupangBanner";
 
 export const dynamicParams = false;
 
@@ -163,6 +165,12 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
           <div className="bg-indigo-50/50 p-6 rounded-2xl border border-indigo-100/50 text-[#3F37C9] text-xs sm:text-sm font-extrabold leading-relaxed">
             📢 이 글은 공공데이터포털(data.go.kr)의 정보를 바탕으로 AI가 작성하였습니다. 정확한 내용은 원문 링크를 통해 확인해주세요.
           </div>
+
+          {/* AdSense 광고 배너 삽입 */}
+          <AdBanner />
+
+          {/* Coupang 파트너스 배너 삽입 */}
+          <CoupangBanner />
 
           {/* 하단 태그 및 목록 버튼 */}
           <div className="pt-8 border-t border-slate-100 space-y-6">

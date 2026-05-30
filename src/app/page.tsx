@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import Link from "next/link";
+import AdBanner from "@/components/AdBanner";
 
 interface InfoItem {
   id: string;
@@ -252,6 +253,9 @@ export default function Home() {
 
           </div>
         </section>
+
+        {/* AdSense 광고 배너 삽입 (정부지원사업 섹션과 지원금/혜택 섹션 사이) */}
+        <AdBanner />
 
         {/* ==========================================
             💰 [지원금/혜택 카테고리] 풍성하고 긍정적인 Sunset Orange 일관된 테마

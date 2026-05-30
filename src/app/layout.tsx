@@ -29,6 +29,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const adsenseId = process.env.NEXT_PUBLIC_ADSENSE_ID;
+  const showAdsense = adsenseId && adsenseId !== "나중에_입력" && adsenseId.trim() !== "";
+
   // WebSite 구조화 데이터 정의
   const websiteJsonLd = {
     "@context": "https://schema.org",
@@ -38,7 +41,7 @@ export default function RootLayout({
     "description": "소방·건설 현장 실무자를 위한 무료 행정 문서 자동화 서비스와 정부지원금·혜택 정보 제공"
   };
 
-  // BreadcrumbList 구조화 데이터 정의 (홈 > 블로그 > 글 상세 경로의 표준화)
+  // BreadcrumbList 구조화 데이터 정의
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -63,6 +66,15 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        {showAdsense && (
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseId}`}
+            crossOrigin="anonymous"
+          />
+        )}
+      </head>
       <body className="min-h-full flex flex-col">
         {/* 공통 구조화 데이터 삽입 */}
         <script
