@@ -1,0 +1,9 @@
+name = "bupai-redirect"
+main = "workers/redirect.js"
+account_id = "bae65a1104a3d682a15dfa40d2f34b4a"
+compatibility_date = "2024-01-01"
+
+routes = [
+  { pattern = "bupai.net/*", zone_name = "bupai.net" },
+  { pattern = "www.bupai.net/*", zone_name = "bupai.net" }
+]

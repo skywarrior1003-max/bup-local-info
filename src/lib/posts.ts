@@ -9,12 +9,12 @@ export interface Post {
   summary: string;
   category: string;
   tags: string[];
+  link: string;
   content: string;
 }
 
 const postsDirectory = path.join(process.cwd(), "src", "content", "posts");
 
-// YYYY-MM-DD 포맷 변환 안전 처리 함수
 function formatDate(dateVal: any): string {
   if (!dateVal) return "";
   if (dateVal instanceof Date) {
@@ -31,7 +31,6 @@ function formatDate(dateVal: any): string {
 
 export function getAllPosts(): Post[] {
   try {
-    // 디렉토리가 없으면 생성 후 빈 리스트 리턴
     if (!fs.existsSync(postsDirectory)) {
       fs.mkdirSync(postsDirectory, { recursive: true });
       return [];
@@ -53,11 +52,11 @@ export function getAllPosts(): Post[] {
           summary: data.summary || "",
           category: data.category || "일반",
           tags: Array.isArray(data.tags) ? data.tags : [],
+          link: data.link || "#",
           content,
         };
       });
 
-    // 날짜순 내림차순 정렬 (최신글이 위로)
     return allPostsData.sort((a, b) => (a.date < b.date ? 1 : -1));
   } catch (error) {
     console.error("포스트 가져오기 에러:", error);
@@ -80,6 +79,7 @@ export function getPostBySlug(slug: string): Post | null {
       summary: data.summary || "",
       category: data.category || "일반",
       tags: Array.isArray(data.tags) ? data.tags : [],
+      link: data.link || "#",
       content,
     };
   } catch (error) {

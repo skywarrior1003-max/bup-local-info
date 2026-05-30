@@ -58,6 +58,12 @@ export default function Home() {
               블로그
             </Link>
             <Link
+              href="/about"
+              className="text-sm font-extrabold text-slate-700 hover:text-black transition-all"
+            >
+              소개
+            </Link>
+            <Link
               href="/login"
               className="text-sm font-extrabold text-slate-700 hover:text-black transition-all"
             >
@@ -97,7 +103,7 @@ export default function Home() {
         </div>
 
         {/* ==========================================
-            🔥 [SUPER SPECIAL] 1순위: 문서 자동화 생성하기 카드 (독보적인 다크 미래형 디자인)
+            🔥 [SUPER SPECIAL] 1순위: 문서 자동화 생성하기 카드
             ========================================== */}
         {docAutomation && (
           <section className="space-y-6">
@@ -173,91 +179,76 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
-            {/* 지원사업 카드 1: 모두의 창업 (신뢰의 블루 그라데이션) */}
-            {governmentProjects[0] && (
-              <div className="group flex flex-col bg-[#2563EB]/5 rounded-[32px] border border-[#2563EB]/15 shadow-[0_8px_30px_rgb(0,0,0,0.01)] hover:shadow-[0_20px_45px_rgba(37,99,235,0.12)] hover:border-[#2563EB]/40 transition-all duration-500 transform hover:-translate-y-2 overflow-hidden">
-                {/* 상단 블루 그라데이션 */}
-                <div className="p-6 pb-8 bg-gradient-to-br from-[#3B82F6] to-[#1D4ED8] text-white relative min-h-[220px] flex flex-col justify-between">
-                  <div className="flex justify-between items-center">
-                    <span className="px-4 py-1.5 text-xs font-black rounded-full bg-white/20 backdrop-blur-md">
-                      정부지원사업
-                    </span>
-                    <span className="text-white text-xs sm:text-sm font-black bg-black/20 px-3 py-1 rounded-md">
-                      공식공고 ↗
-                    </span>
-                  </div>
-                  {/* 중앙 라인 아이콘 */}
-                  <div className="py-4 flex justify-center">
-                    <svg className="w-20 h-20 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
-                    </svg>
-                  </div>
-                  <div></div>
-                </div>
-                {/* 하단 화이트 텍스트 영역 */}
-                <div className="bg-white p-6 sm:p-8 rounded-b-[32px] border-t border-slate-100 flex flex-col justify-between flex-1 space-y-4">
-                  <div className="space-y-3">
-                    <Link href="/blog">
-                      <h4 className="text-xl sm:text-2xl font-black text-[#0F172A] leading-snug group-hover:text-[#2563EB] transition-colors duration-200">
-                        {governmentProjects[0].name}
-                      </h4>
-                    </Link>
-                    <p className="text-[#374151] text-sm sm:text-base font-bold leading-relaxed">
-                      {governmentProjects[0].summary}
-                    </p>
-                  </div>
-                  <div className="flex justify-between items-center text-xs sm:text-sm text-slate-800 font-extrabold border-t border-slate-100 pt-4">
-                    <span className="bg-slate-100 px-3 py-1 rounded-md">마감기한: ~ 05.29</span>
-                    <Link href="/blog" className="text-[#2563EB] hover:text-[#1D4ED8] hover:underline font-black text-sm sm:text-base flex items-center gap-1">
-                      자세히 보기 →
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )}
+            {governmentProjects.map((item) => {
+              // 각 정부지원사업용 GovernmentService 구조화 데이터 정의
+              const serviceJsonLd = {
+                "@context": "https://schema.org",
+                "@type": "GovernmentService",
+                "name": item.name,
+                "description": item.summary,
+                "provider": {
+                  "@type": "GovernmentOrganization",
+                  "name": item.location
+                },
+                "serviceOperator": {
+                  "@type": "GovernmentOrganization",
+                  "name": item.location
+                },
+                "startDate": item.startDate,
+                "endDate": item.endDate
+              };
 
-            {/* 지원사업 카드 2: SaaS 개발 지원사업 */}
-            {governmentProjects[1] && (
-              <div className="group flex flex-col bg-[#2563EB]/5 rounded-[32px] border border-[#2563EB]/15 shadow-[0_8px_30px_rgb(0,0,0,0.01)] hover:shadow-[0_20px_45px_rgba(37,99,235,0.12)] hover:border-[#2563EB]/40 transition-all duration-500 transform hover:-translate-y-2 overflow-hidden">
-                {/* 상단 블루 그라데이션 */}
-                <div className="p-6 pb-8 bg-gradient-to-br from-[#3B82F6] to-[#1D4ED8] text-white relative min-h-[220px] flex flex-col justify-between">
-                  <div className="flex justify-between items-center">
-                    <span className="px-4 py-1.5 text-xs font-black rounded-full bg-white/20 backdrop-blur-md">
-                      정부지원사업
-                    </span>
-                    <span className="text-white text-xs sm:text-sm font-black bg-black/20 px-3 py-1 rounded-md">
-                      공식공고 ↗
-                    </span>
+              return (
+                <div
+                  key={item.id}
+                  className="group flex flex-col bg-[#2563EB]/5 rounded-[32px] border border-[#2563EB]/15 shadow-[0_8px_30px_rgb(0,0,0,0.01)] hover:shadow-[0_20px_45px_rgba(37,99,235,0.12)] hover:border-[#2563EB]/40 transition-all duration-500 transform hover:-translate-y-2 overflow-hidden"
+                >
+                  {/* GovernmentService 구조화 데이터 삽입 */}
+                  <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
+                  />
+
+                  {/* 상단 블루 그라데이션 */}
+                  <div className="p-6 pb-8 bg-gradient-to-br from-[#3B82F6] to-[#1D4ED8] text-white relative min-h-[220px] flex flex-col justify-between">
+                    <div className="flex justify-between items-center">
+                      <span className="px-4 py-1.5 text-xs font-black rounded-full bg-white/20 backdrop-blur-md">
+                        정부지원사업
+                      </span>
+                      <span className="text-white text-xs sm:text-sm font-black bg-black/20 px-3 py-1 rounded-md">
+                        공식공고 ↗
+                      </span>
+                    </div>
+                    {/* 중앙 라인 아이콘 */}
+                    <div className="py-4 flex justify-center">
+                      <svg className="w-20 h-20 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
+                      </svg>
+                    </div>
+                    <div></div>
                   </div>
-                  {/* 중앙 라인 아이콘 */}
-                  <div className="py-4 flex justify-center">
-                    <svg className="w-20 h-20 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
-                    </svg>
+                  {/* 하단 화이트 텍스트 영역 */}
+                  <div className="bg-white p-6 sm:p-8 rounded-b-[32px] border-t border-slate-100 flex flex-col justify-between flex-1 space-y-4">
+                    <div className="space-y-3">
+                      <Link href="/blog">
+                        <h4 className="text-xl sm:text-2xl font-black text-[#0F172A] leading-snug group-hover:text-[#2563EB] transition-colors duration-200">
+                          {item.name}
+                        </h4>
+                      </Link>
+                      <p className="text-[#374151] text-sm sm:text-base font-bold leading-relaxed">
+                        {item.summary}
+                      </p>
+                    </div>
+                    <div className="flex justify-between items-center text-xs sm:text-sm text-slate-800 font-extrabold border-t border-slate-100 pt-4">
+                      <span className="bg-slate-100 px-3 py-1 rounded-md">마감기한: ~ {item.endDate.split("-")[1] || "05"}.{item.endDate.split("-")[2] || "30"}</span>
+                      <Link href="/blog" className="text-[#2563EB] hover:text-[#1D4ED8] hover:underline font-black text-sm sm:text-base flex items-center gap-1">
+                        자세히 보기 →
+                      </Link>
+                    </div>
                   </div>
-                  <div></div>
                 </div>
-                {/* 하단 화이트 텍스트 영역 */}
-                <div className="bg-white p-6 sm:p-8 rounded-b-[32px] border-t border-slate-100 flex flex-col justify-between flex-1 space-y-4">
-                  <div className="space-y-3">
-                    <Link href="/blog">
-                      <h4 className="text-xl sm:text-2xl font-black text-[#0F172A] leading-snug group-hover:text-[#2563EB] transition-colors duration-200">
-                        {governmentProjects[1].name}
-                      </h4>
-                    </Link>
-                    <p className="text-[#374151] text-sm sm:text-base font-bold leading-relaxed">
-                      {governmentProjects[1].summary}
-                    </p>
-                  </div>
-                  <div className="flex justify-between items-center text-xs sm:text-sm text-slate-800 font-extrabold border-t border-slate-100 pt-4">
-                    <span className="bg-slate-100 px-3 py-1 rounded-md">마감기한: ~ 05.28</span>
-                    <Link href="/blog" className="text-[#2563EB] hover:text-[#1D4ED8] hover:underline font-black text-sm sm:text-base flex items-center gap-1">
-                      자세히 보기 →
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )}
+              );
+            })}
 
           </div>
         </section>
@@ -275,91 +266,74 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
-            {/* 혜택 카드 1: 부산시 창업 지원금 */}
-            {benefits[0] && (
-              <div className="group flex flex-col bg-[#F97316]/5 rounded-[32px] border border-[#F97316]/15 shadow-[0_8px_30px_rgb(0,0,0,0.01)] hover:shadow-[0_20px_45px_rgba(249,115,22,0.12)] hover:border-[#F97316]/40 transition-all duration-500 transform hover:-translate-y-2 overflow-hidden">
-                {/* 상단 오렌지 그라데이션 */}
-                <div className="p-6 pb-8 bg-gradient-to-br from-[#FB923C] to-[#F97316] text-white relative min-h-[220px] flex flex-col justify-between">
-                  <div className="flex justify-between items-center">
-                    <span className="px-4 py-1.5 text-xs font-black rounded-full bg-white/20 backdrop-blur-md">
-                      재정지원 및 혜택
-                    </span>
-                    <span className="text-white text-xs sm:text-sm font-black bg-black/20 px-3 py-1 rounded-md">
-                      무상지원 ↗
-                    </span>
-                  </div>
-                  {/* 중앙 라인 아이콘 */}
-                  <div className="py-4 flex justify-center">
-                    <svg className="w-20 h-20 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                    </svg>
-                  </div>
-                  <div></div>
-                </div>
-                {/* 하단 화이트 텍스트 영역 */}
-                <div className="bg-white p-6 sm:p-8 rounded-b-[32px] border-t border-slate-100 flex flex-col justify-between flex-1 space-y-4">
-                  <div className="space-y-3">
-                    <Link href="/blog">
-                      <h4 className="text-xl sm:text-2xl font-black text-[#0F172A] leading-snug group-hover:text-[#F97316] transition-colors duration-200">
-                        {benefits[0].name}
-                      </h4>
-                    </Link>
-                    <p className="text-[#374151] text-sm sm:text-base font-bold leading-relaxed">
-                      {benefits[0].summary}
-                    </p>
-                  </div>
-                  <div className="flex justify-between items-center text-xs sm:text-sm text-slate-800 font-extrabold border-t border-slate-100 pt-4">
-                    <span className="bg-slate-100 px-3 py-1 rounded-md">수혜조건: 선정 및 당선 시 즉시</span>
-                    <Link href="/blog" className="text-[#F97316] hover:text-[#EA580C] hover:underline font-black text-sm sm:text-base flex items-center gap-1">
-                      신청방법 보기 →
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )}
+            {benefits.map((item) => {
+              // 각 지원금 혜택용 GovernmentService 구조화 데이터 정의
+              const benefitJsonLd = {
+                "@context": "https://schema.org",
+                "@type": "GovernmentService",
+                "name": item.name,
+                "description": item.summary,
+                "provider": {
+                  "@type": "GovernmentOrganization",
+                  "name": item.location
+                },
+                "serviceOperator": {
+                  "@type": "GovernmentOrganization",
+                  "name": item.location
+                }
+              };
 
-            {/* 혜택 카드 2: IP나래 지원금 */}
-            {benefits[1] && (
-              <div className="group flex flex-col bg-[#F97316]/5 rounded-[32px] border border-[#F97316]/15 shadow-[0_8px_30px_rgb(0,0,0,0.01)] hover:shadow-[0_20px_45px_rgba(249,115,22,0.12)] hover:border-[#F97316]/40 transition-all duration-500 transform hover:-translate-y-2 overflow-hidden">
-                {/* 상단 오렌지 그라데이션 */}
-                <div className="p-6 pb-8 bg-gradient-to-br from-[#FB923C] to-[#F97316] text-white relative min-h-[220px] flex flex-col justify-between">
-                  <div className="flex justify-between items-center">
-                    <span className="px-4 py-1.5 text-xs font-black rounded-full bg-white/20 backdrop-blur-md">
-                      재정지원 및 혜택
-                    </span>
-                    <span className="text-white text-xs sm:text-sm font-black bg-black/20 px-3 py-1 rounded-md">
-                      무상지원 ↗
-                    </span>
+              return (
+                <div
+                  key={item.id}
+                  className="group flex flex-col bg-[#F97316]/5 rounded-[32px] border border-[#F97316]/15 shadow-[0_8px_30px_rgb(0,0,0,0.01)] hover:shadow-[0_20px_45px_rgba(249,115,22,0.12)] hover:border-[#F97316]/40 transition-all duration-500 transform hover:-translate-y-2 overflow-hidden"
+                >
+                  {/* GovernmentService 구조화 데이터 삽입 */}
+                  <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(benefitJsonLd) }}
+                  />
+
+                  {/* 상단 오렌지 그라데이션 */}
+                  <div className="p-6 pb-8 bg-gradient-to-br from-[#FB923C] to-[#F97316] text-white relative min-h-[220px] flex flex-col justify-between">
+                    <div className="flex justify-between items-center">
+                      <span className="px-4 py-1.5 text-xs font-black rounded-full bg-white/20 backdrop-blur-md">
+                        재정지원 및 혜택
+                      </span>
+                      <span className="text-white text-xs sm:text-sm font-black bg-black/20 px-3 py-1 rounded-md">
+                        무상지원 ↗
+                      </span>
+                    </div>
+                    {/* 중앙 라인 아이콘 */}
+                    <div className="py-4 flex justify-center">
+                      <svg className="w-20 h-20 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                      </svg>
+                    </div>
+                    <div></div>
                   </div>
-                  {/* 중앙 라인 아이콘 */}
-                  <div className="py-4 flex justify-center">
-                    <svg className="w-20 h-20 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.214-.145A3.75 3.75 0 0112.465 15h.07a3.75 3.75 0 013.548 3.364l.052.47a3.75 3.75 0 01-3.548 3.364H12a3.75 3.75 0 01-3.548-3.364M12 6.182V3.75m0 2.432a3.75 3.75 0 00-3.548 3.364l-.052.47A3.75 3.75 0 0012 13.364h.07a3.75 3.75 0 003.548-3.364l.052-.47A3.75 3.75 0 0012 6.182z" />
-                    </svg>
+                  {/* 하단 화이트 텍스트 영역 */}
+                  <div className="bg-white p-6 sm:p-8 rounded-b-[32px] border-t border-slate-100 flex flex-col justify-between flex-1 space-y-4">
+                    <div className="space-y-3">
+                      <Link href="/blog">
+                        <h4 className="text-xl sm:text-2xl font-black text-[#0F172A] leading-snug group-hover:text-[#F97316] transition-colors duration-200">
+                          {item.name}
+                        </h4>
+                      </Link>
+                      <p className="text-[#374151] text-sm sm:text-base font-bold leading-relaxed">
+                        {item.summary}
+                      </p>
+                    </div>
+                    <div className="flex justify-between items-center text-xs sm:text-sm text-slate-800 font-extrabold border-t border-slate-100 pt-4">
+                      <span className="bg-slate-100 px-3 py-1 rounded-md">수혜조건: 선정 및 당선 시 즉시</span>
+                      <Link href="/blog" className="text-[#F97316] hover:text-[#EA580C] hover:underline font-black text-sm sm:text-base flex items-center gap-1">
+                        신청방법 보기 →
+                      </Link>
+                    </div>
                   </div>
-                  <div></div>
                 </div>
-                {/* 하단 화이트 텍스트 영역 */}
-                <div className="bg-white p-6 sm:p-8 rounded-b-[32px] border-t border-slate-100 flex flex-col justify-between flex-1 space-y-4">
-                  <div className="space-y-3">
-                    <Link href="/blog">
-                      <h4 className="text-xl sm:text-2xl font-black text-[#0F172A] leading-snug group-hover:text-[#F97316] transition-colors duration-200">
-                        {benefits[1].name}
-                      </h4>
-                    </Link>
-                    <p className="text-[#374151] text-sm sm:text-base font-bold leading-relaxed">
-                      {benefits[1].summary}
-                    </p>
-                  </div>
-                  <div className="flex justify-between items-center text-xs sm:text-sm text-slate-800 font-extrabold border-t border-slate-100 pt-4">
-                    <span className="bg-slate-100 px-3 py-1 rounded-md">마감기한: ~ 06.30</span>
-                    <Link href="/blog" className="text-[#F97316] hover:text-[#EA580C] hover:underline font-black text-sm sm:text-base flex items-center gap-1">
-                      신청방법 보기 →
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )}
+              );
+            })}
 
           </div>
         </section>

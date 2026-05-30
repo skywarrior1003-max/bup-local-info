@@ -9,11 +9,19 @@ export default function BlogListPage() {
       {/* 상단 헤더 */}
       <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-slate-200/50 shadow-sm">
         <div className="max-w-4xl mx-auto px-6 py-4 flex flex-row justify-between items-center">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-sm font-black tracking-widest text-[#4F46E5] uppercase">
-              ← BUP LOCAL · HOME
-            </span>
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/" className="flex items-center gap-2">
+              <span className="text-sm font-black tracking-widest text-[#4F46E5] uppercase">
+                ← BUP LOCAL · HOME
+              </span>
+            </Link>
+            <Link href="/blog" className="text-sm font-extrabold text-slate-700 hover:text-black transition-all">
+              블로그
+            </Link>
+            <Link href="/about" className="text-sm font-extrabold text-slate-700 hover:text-black transition-all">
+              소개
+            </Link>
+          </div>
           <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-indigo-50 text-[#4F46E5] border border-indigo-100">
             🤖 AI 블로그 뉴스
           </span>
