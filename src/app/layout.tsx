@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "BUP LOCAL TOOLS | 소방·건설 현장 문서 자동화 & 정부지원금",
   description: "소방·건설 현장 실무자를 위한 무료 행정 문서 자동화 서비스. 사진 한 장으로 현장 공문서를 자동 완성하고, 이번 달 정부지원사업과 지원금·혜택 정보를 실시간으로 확인하세요.",
+  robots: { index: false, follow: false },
   openGraph: {
     url: "https://bupplatform.com",
     siteName: "BUP LOCAL TOOLS",
