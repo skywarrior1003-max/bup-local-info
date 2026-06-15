@@ -80,28 +80,7 @@ const BLOCKED_HTML = `<!DOCTYPE html>
 </html>`;
 
 export async function onRequest({ request, next }) {
-  const url = new URL(request.url);
-  const cookie = request.headers.get("Cookie") || "";
-  const isAuthed = cookie.includes(`${COOKIE_NAME}=${ACCESS_KEY}`);
-
-  // 비밀 키 파라미터로 접속 시 쿠키 발급 후 메인으로 리다이렉트
-  if (url.searchParams.get("key") === ACCESS_KEY) {
-    const redirectUrl = url.origin + url.pathname;
-    return new Response(null, {
-      status: 302,
-      headers: {
-        Location: redirectUrl,
-        "Set-Cookie": `${COOKIE_NAME}=${ACCESS_KEY}; Path=/; Max-Age=86400; HttpOnly; Secure; SameSite=Lax`,
-      },
-    });
-  }
-
-  // 인증 쿠키 있으면 정상 통과
-  if (isAuthed) {
-    return next();
-  }
-
-  // 미인증 → 준비 중 페이지
+  // 모든 접속을 차단하고 준비 중 페이지를 보여줍니다.
   return new Response(BLOCKED_HTML, {
     status: 200,
     headers: { "Content-Type": "text/html; charset=utf-8" },
