@@ -82,7 +82,7 @@ export default function AttestationDetailPage() {
                 </tr>
                 <tr>
                   <td className="py-3 px-4 text-secondary">판정</td>
-                  <td className="py-3 px-4 text-right font-semibold text-[#1E7A46]">합격</td>
+                  <td className="py-3 px-4 text-right font-semibold text-success">합격</td>
                 </tr>
               </tbody>
             </table>
@@ -101,7 +101,7 @@ export default function AttestationDetailPage() {
           <div className="card-level-1 p-0 flex flex-col">
             <div className="p-4 border-b border-outline-variant flex items-start gap-3">
               <span
-                className="material-symbols-outlined text-[#1E7A46] shrink-0 mt-[2px]"
+                className="material-symbols-outlined text-success shrink-0 mt-[2px]"
                 style={{fontVariationSettings: "'FILL' 1"}}
               >
                 check_circle
@@ -119,7 +119,7 @@ export default function AttestationDetailPage() {
 
             <div className="p-4 border-b border-outline-variant flex items-start gap-3">
               <span
-                className="material-symbols-outlined text-[#1E7A46] shrink-0 mt-[2px]"
+                className="material-symbols-outlined text-success shrink-0 mt-[2px]"
                 style={{fontVariationSettings: "'FILL' 1"}}
               >
                 check_circle

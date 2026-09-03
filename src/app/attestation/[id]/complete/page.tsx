@@ -19,7 +19,7 @@ export default function AttestationCompletePage() {
       {/* Main */}
       <main className="pt-[64px] pb-[96px] px-screen-margin flex flex-col gap-section-gap mt-[20px]">
         {/* ① 완료 배너 */}
-        <section className="bg-[#1E7A46] text-on-primary p-4 rounded flex items-start gap-3">
+        <section className="bg-success text-on-primary p-4 rounded flex items-start gap-3">
           <span className="material-symbols-outlined shrink-0" style={{fontVariationSettings: "'FILL' 1"}}>
             verified
           </span>
