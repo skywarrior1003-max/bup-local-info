@@ -1,0 +1,19 @@
+/* 화면 21~23(다자 상호서명) 전용 스타일.
+   원본 문서의 <style> 블록을 그대로 옮겼다.
+   body 규칙은 루트 레이아웃이 이미 같은 역할을 하므로 옮기지 않았다. */
+
+.app-container {
+  width: 100%;
+  max-width: 390px;
+  min-height: 100vh;
+  background-color: #f5f6f8;
+  position: relative;
+  padding-bottom: 64px;
+}
+
+/* Level 1 Card Style */
+.card-level-1 {
+  background-color: #ffffff;
+  border: 1px solid #e3e6ea;
+  border-radius: 0.25rem;
+}
