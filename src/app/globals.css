@@ -1,20 +1,152 @@
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap");
 @import "tailwindcss";
-@plugin "@tailwindcss/typography";
 
-:root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-}
+@theme {
+  --color-primary: #022448;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #1e3a5f;
+  --color-on-primary-container: #8aa4cf;
+  --color-primary-fixed: #d5e3ff;
+  --color-primary-fixed-dim: #adc8f5;
+  --color-on-primary-fixed: #001c3b;
+  --color-on-primary-fixed-variant: #2d486d;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-secondary: #585f6b;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #dce3f1;
+  --color-on-secondary-container: #5e6571;
+  --color-secondary-fixed: #dce3f1;
+  --color-secondary-fixed-dim: #c0c7d4;
+  --color-on-secondary-fixed: #151c26;
+  --color-on-secondary-fixed-variant: #404752;
+
+  --color-tertiary: #341f00;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #503300;
+  --color-on-tertiary-container: #c69b5f;
+  --color-tertiary-fixed: #ffddb2;
+  --color-tertiary-fixed-dim: #edbf7f;
+  --color-on-tertiary-fixed: #291800;
+  --color-on-tertiary-fixed-variant: #60410c;
+
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  --color-warning: #c77700;
+  --color-success: #1b873f;
+
+  --color-background: #faf9fc;
+  --color-on-background: #1a1c1e;
+  --color-surface: #faf9fc;
+  --color-on-surface: #1a1c1e;
+  --color-surface-variant: #e3e2e6;
+  --color-on-surface-variant: #43474e;
+  --color-surface-dim: #dad9dd;
+  --color-surface-bright: #faf9fc;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f4f3f7;
+  --color-surface-container: #eeedf1;
+  --color-surface-container-high: #e9e7eb;
+  --color-surface-container-highest: #e3e2e6;
+  --color-inverse-surface: #2f3033;
+  --color-inverse-on-surface: #f1f0f4;
+  --color-inverse-primary: #adc8f5;
+  --color-surface-tint: #455f87;
+  --color-outline: #74777f;
+  --color-outline-variant: #c4c6cf;
+
+  --radius-card: 14px;
+
+  --spacing-card-padding: 16px;
+  --spacing-section-gap: 28px;
+  --spacing-mobile-width: 390px;
+  --spacing-screen-margin: 20px;
+  --spacing-card-gap: 12px;
+
+  --font-caption: 'Noto Sans KR', sans-serif;
+  --font-section-title: 'Noto Sans KR', sans-serif;
+  --font-body-sub: 'Noto Sans KR', sans-serif;
+  --font-button-text: 'Noto Sans KR', sans-serif;
+  --font-headline-display: 'Noto Sans KR', sans-serif;
+  --font-body-main: 'Noto Sans KR', sans-serif;
+  --font-number-highlight: 'Noto Sans KR', sans-serif;
+
+  --text-caption: 13px;
+  --text-caption--line-height: 18px;
+  --text-section-title: 18px;
+  --text-section-title--line-height: 26px;
+  --text-body-sub: 14px;
+  --text-body-sub--line-height: 20px;
+  --text-button-text: 17px;
+  --text-button-text--line-height: 24px;
+  --text-headline-display: 24px;
+  --text-headline-display--line-height: 32px;
+  --text-body-main: 16px;
+  --text-body-main--line-height: 24px;
+  --text-number-highlight: 28px;
+  --text-number-highlight--line-height: 36px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-  letter-spacing: -0.02em;
+  background-color: #F5F6F8;
+  font-family: 'Noto Sans KR', sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.material-symbols-outlined[data-weight="fill"],
+.material-symbols-outlined.fill-1 {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Custom font utilities for exact typography specs */
+.font-caption { font-family: 'Noto Sans KR', sans-serif; font-size: 13px; line-height: 18px; font-weight: 400; }
+.font-section-title { font-family: 'Noto Sans KR', sans-serif; font-size: 18px; line-height: 26px; font-weight: 600; }
+.font-body-sub { font-family: 'Noto Sans KR', sans-serif; font-size: 14px; line-height: 20px; font-weight: 400; }
+.font-button-text { font-family: 'Noto Sans KR', sans-serif; font-size: 17px; line-height: 24px; font-weight: 600; }
+.font-headline-display { font-family: 'Noto Sans KR', sans-serif; font-size: 24px; line-height: 32px; font-weight: 700; }
+.font-body-main { font-family: 'Noto Sans KR', sans-serif; font-size: 16px; line-height: 24px; font-weight: 400; }
+.font-number-highlight { font-family: 'Noto Sans KR', sans-serif; font-size: 28px; line-height: 36px; font-weight: 700; }
+
+.text-caption { font-size: 13px; line-height: 18px; }
+.text-section-title { font-size: 18px; line-height: 26px; }
+.text-body-sub { font-size: 14px; line-height: 20px; }
+.text-button-text { font-size: 17px; line-height: 24px; }
+.text-headline-display { font-size: 24px; line-height: 32px; }
+.text-body-main { font-size: 16px; line-height: 24px; }
+.text-number-highlight { font-size: 28px; line-height: 36px; }
+
+.rounded-card { border-radius: 14px; }
+.p-card-padding { padding: 16px; }
+.px-screen-margin { padding-left: 20px; padding-right: 20px; }
+.gap-card-gap { gap: 12px; }
+.mb-section-gap { margin-bottom: 28px; }
+.max-w-mobile-width { max-width: 390px; }
+
+/* Custom styles for the camera overlay effect */
+.camera-overlay {
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
+}
+.guide-frame {
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+}
+

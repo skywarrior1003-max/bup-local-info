@@ -79,8 +79,32 @@ const BLOCKED_HTML = `<!DOCTYPE html>
 </body>
 </html>`;
 
-export async function onRequest({ request, next }) {
-  // 모든 접속을 차단하고 준비 중 페이지를 보여줍니다.
+export async function onRequest({ request, next, env }) {
+  // 키는 Cloudflare Pages 환경변수(ACCESS_KEY)로 관리한다.
+  // 이 저장소는 공개되어 있으므로 아래 기본값은 임시용이다.
+  const accessKey = (env && env.ACCESS_KEY) || ACCESS_KEY;
+
+  const url = new URL(request.url);
+  const cookie = request.headers.get("Cookie") || "";
+  const isAuthed = cookie.includes(`${COOKIE_NAME}=${accessKey}`);
+
+  // 비밀 키 파라미터로 접속 시 쿠키 발급 후 원래 경로로 리다이렉트
+  if (url.searchParams.get("key") === accessKey) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: url.origin + url.pathname,
+        "Set-Cookie": `${COOKIE_NAME}=${accessKey}; Path=/; Max-Age=86400; HttpOnly; Secure; SameSite=Lax`,
+      },
+    });
+  }
+
+  // 인증 쿠키 있으면 정상 통과
+  if (isAuthed) {
+    return next();
+  }
+
+  // 미인증 → 준비 중 페이지
   return new Response(BLOCKED_HTML, {
     status: 200,
     headers: { "Content-Type": "text/html; charset=utf-8" },
