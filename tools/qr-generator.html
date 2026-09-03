@@ -51,6 +51,22 @@
   input[type="text"]:focus, select:focus { border-color: var(--navy-soft); box-shadow: 0 0 0 3px rgba(30,58,95,.12); }
   .field + .field { margin-top: 18px; }
   .hint { font-size: 13px; color: var(--ink-sub); margin-top: 8px; }
+  .modes { display: flex; flex-direction: column; gap: 10px; }
+  .mode {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 15px;
+  }
+  .mode:has(input:checked) { border-color: var(--navy); background: #f7f9fc; }
+  .mode input { margin-top: 4px; flex: none; width: 18px; height: 18px; accent-color: var(--navy); }
+  .mode b { display: block; font-weight: 600; color: var(--ink); }
+  .mode span { display: block; font-size: 13px; color: var(--ink-sub); margin-top: 2px; }
+  [hidden] { display: none !important; }
   .urlbox {
     margin-top: 18px;
     padding: 14px;
@@ -107,11 +123,31 @@
 
   <div class="noprint">
     <h1>BUP 접속 QR 만들기</h1>
-    <p class="lede">키를 넣으면 QR이 만들어집니다. 이 페이지는 인터넷 연결 없이 동작하며, 입력한 키는 이 컴퓨터 밖으로 나가지 않습니다.</p>
+    <p class="lede">스캔하면 사이트가 열리는 QR을 만듭니다. 이 페이지는 인터넷 연결 없이 동작하며, 입력한 키는 이 컴퓨터 밖으로 나가지 않습니다.</p>
   </div>
 
   <div class="card noprint">
     <div class="field">
+      <label>QR 방식</label>
+      <div class="modes">
+        <label class="mode">
+          <input type="radio" name="mode" value="ask" checked />
+          <span style="display:block">
+            <b>키 없이 만들기 (권장)</b>
+            <span>스캔하면 키 입력 칸이 뜹니다. QR 자체는 비밀이 아니라서 발표자료나 화면에 띄워도 됩니다.</span>
+          </span>
+        </label>
+        <label class="mode">
+          <input type="radio" name="mode" value="embed" />
+          <span style="display:block">
+            <b>키를 넣어 만들기</b>
+            <span>스캔하면 입력 없이 바로 들어갑니다. 대신 이 QR은 비밀번호와 같습니다.</span>
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <div class="field" id="keyfield" hidden>
       <label for="key">접속 키 (Cloudflare의 ACCESS_KEY 값)</label>
       <input type="text" id="key" placeholder="예: bup-263ecfa2808e" autocomplete="off" spellcheck="false" />
       <p class="hint">Cloudflare &rarr; Workers &amp; Pages &rarr; bup-local-info &rarr; Settings &rarr; Variables 에 저장하신 값입니다.</p>
@@ -144,7 +180,13 @@
     <button id="print" class="ghost" disabled>인쇄</button>
   </div>
 
-  <div class="warn noprint">
+  <div class="warn noprint" id="warn-ask">
+    이 QR에는 키가 들어 있지 않습니다. 스캔한 사람에게는 <b>키 입력 칸</b>이 뜨고, 키를 아는 사람만 들어옵니다.
+    그러니 이 QR은 발표자료에 넣거나 화면에 띄워도 괜찮습니다. <b>키는 따로 알려주세요.</b><br /><br />
+    한 번 들어가면 <b>24시간</b> 동안 다시 묻지 않습니다.
+  </div>
+
+  <div class="warn noprint" id="warn-embed" hidden>
     <b>이 QR은 비밀번호와 같습니다.</b> 스캔한 사람뿐 아니라 QR을 사진 찍거나 캡처해서 전달받은 사람도 들어옵니다.
     발표자료나 명함에 넣는 건 괜찮지만 블로그&middot;SNS에 올리면 사실상 공개된 것과 같습니다.<br /><br />
     한 번 들어가면 <b>24시간</b> 동안 키 없이 접속됩니다. 차단하려면 Cloudflare에서 ACCESS_KEY 값을 바꾸고 재배포하면
@@ -169,14 +211,24 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   var saveBtn = document.getElementById('save');
   var printBtn = document.getElementById('print');
 
+  function currentMode() {
+    var checked = document.querySelector('input[name="mode"]:checked');
+    return checked ? checked.value : 'ask';
+  }
+
   function render() {
+    var mode = currentMode();
     var key = keyEl.value.trim();
     var path = targetEl.value;
     var label = targetEl.options[targetEl.selectedIndex].text;
 
+    document.getElementById('keyfield').hidden = mode !== 'embed';
+    document.getElementById('warn-ask').hidden = mode !== 'ask';
+    document.getElementById('warn-embed').hidden = mode !== 'embed';
+
     qrEl.innerHTML = '';
 
-    if (!key) {
+    if (mode === 'embed' && !key) {
       urlEl.textContent = '키를 입력하면 주소가 여기에 표시됩니다.';
       emptyEl.style.display = '';
       capEl.textContent = '';
@@ -186,7 +238,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       return;
     }
 
-    var url = ORIGIN + path + '?key=' + encodeURIComponent(key);
+    var url = ORIGIN + path + (mode === 'embed' ? '?key=' + encodeURIComponent(key) : '');
     urlEl.innerHTML = '<strong></strong>';
     urlEl.firstChild.textContent = url;
     emptyEl.style.display = 'none';
@@ -225,9 +277,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
   keyEl.addEventListener('input', render);
   targetEl.addEventListener('change', render);
+  Array.prototype.forEach.call(
+    document.querySelectorAll('input[name="mode"]'),
+    function (el) { el.addEventListener('change', render); }
+  );
   saveBtn.addEventListener('click', download);
   printBtn.addEventListener('click', function () { window.print(); });
-  keyEl.focus();
+  render();
 })();
 </script>
 </body>
