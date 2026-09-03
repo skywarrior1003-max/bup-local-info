@@ -186,6 +186,27 @@ export default async function SiteDetailPage({
             </div>
             <span className="material-symbols-outlined text-outline text-[20px]">chevron_right</span>
           </Link>
+
+          <Link
+            href="/attestation"
+            className="bg-white border border-[#E3E6EA] rounded-xl p-3.5 flex items-center justify-between shadow-sm active:bg-surface-container-low transition-colors hover:border-primary/40 cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <div className="bg-primary-fixed/30 p-2 rounded-lg flex items-center justify-center text-primary">
+                <span className="material-symbols-outlined text-[22px]">draw</span>
+              </div>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-body-main text-[15px] font-bold text-on-surface">서명 요청함</span>
+                  <span className="text-warning text-[11px] font-bold bg-warning/15 px-1.5 py-0.5 rounded">
+                    대기 2건
+                  </span>
+                </div>
+                <p className="font-caption text-[12px] text-secondary mt-0.5">검측서·점검표 상호서명 · 보낸 요청 3건</p>
+              </div>
+            </div>
+            <span className="material-symbols-outlined text-outline text-[20px]">chevron_right</span>
+          </Link>
         </section>
 
         {/* Pending List Area */}
