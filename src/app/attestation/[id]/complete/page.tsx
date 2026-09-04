@@ -1,4 +1,13 @@
+'use client';
+
+import {useParams, useRouter} from 'next/navigation';
+import {getAttestationDoc} from '../../documents';
+
 export default function AttestationCompletePage() {
+  const params = useParams();
+  const router = useRouter();
+  const doc = getAttestationDoc(params.id as string);
+
   return (
     <div className="app-container">
       {/* TopAppBar */}
@@ -6,6 +15,7 @@ export default function AttestationCompletePage() {
         <div className="flex items-center gap-2">
           <button
             aria-label="Go back"
+            onClick={() => router.back()}
             className="text-primary active:scale-95 transition-transform duration-100 flex items-center justify-center p-2 -ml-2"
           >
             <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 0"}}>
@@ -25,22 +35,20 @@ export default function AttestationCompletePage() {
           </span>
           <div>
             <p className="font-section-title text-section-title">상호 인증 완료</p>
-            <p className="font-body-sub text-body-sub mt-1">서명 4건 · 해시 체인 검증 통과</p>
+            <p className="font-body-sub text-body-sub mt-1">{doc.completeSummary}</p>
           </div>
         </section>
 
         {/* ② 문서 */}
         <section className="card-level-1 p-card-padding flex flex-col gap-1">
           <div className="font-section-title text-section-title text-on-surface leading-[26px]">
-            3층 소화배관 수압시험 검측서
+            {doc.title}
           </div>
-          <div className="font-caption text-caption text-secondary mt-1">
-            동래 A현장 · v1 · 완료 2026-08-30 09:12
-          </div>
+          <div className="font-caption text-caption text-secondary mt-1">{doc.completedAt}</div>
           <div className="border-t border-outline-variant mt-3 pt-3">
             <div className="font-caption text-caption text-secondary">최종 체인 해시</div>
             <div className="font-caption text-caption text-on-surface break-all mt-[2px]">
-              9af6b3d1c05e47a2f8e91d6b0c3a57e4
+              {doc.finalHash}
             </div>
           </div>
         </section>
@@ -49,69 +57,25 @@ export default function AttestationCompletePage() {
         <section className="flex flex-col gap-card-gap">
           <h2 className="font-section-title text-section-title text-on-surface">서명 이력</h2>
           <div className="card-level-1 p-0 flex flex-col">
-            <div className="p-4 border-b border-outline-variant">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="font-body-main text-body-main text-on-surface">① 시공 팀장</div>
-                  <div className="font-caption text-caption text-secondary mt-1">
-                    김O수 · ㈜비유피 소방팀
+            {doc.history.map((h, i) => (
+              <div
+                key={h.order}
+                className={`p-4${i === doc.history.length - 1 ? '' : ' border-b border-outline-variant'}`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="font-body-main text-body-main text-on-surface">
+                      {h.order} {h.role}
+                    </div>
+                    <div className="font-caption text-caption text-secondary mt-1">{h.person}</div>
+                  </div>
+                  <div className="shrink-0 font-caption text-caption text-secondary text-right">
+                    {h.at}
                   </div>
                 </div>
-                <div className="shrink-0 font-caption text-caption text-secondary text-right">
-                  08-29 14:20
-                </div>
+                <div className="font-caption text-caption text-secondary mt-2 break-all">{h.how}</div>
               </div>
-              <div className="font-caption text-caption text-secondary mt-2 break-all">
-                화면 필기 · 체인 7c1e4b90
-              </div>
-            </div>
-
-            <div className="p-4 border-b border-outline-variant">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="font-body-main text-body-main text-on-surface">② 현장 관리자</div>
-                  <div className="font-caption text-caption text-secondary mt-1">윤O태 · ㈜비유피</div>
-                </div>
-                <div className="shrink-0 font-caption text-caption text-secondary text-right">
-                  08-29 16:05
-                </div>
-              </div>
-              <div className="font-caption text-caption text-secondary mt-2 break-all">
-                화면 필기 · 체인 2b90f3ac
-              </div>
-            </div>
-
-            <div className="p-4 border-b border-outline-variant">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="font-body-main text-body-main text-on-surface">③ 상위공종 담당자</div>
-                  <div className="font-caption text-caption text-secondary mt-1">
-                    최O석 · 대성종합건설 기계팀
-                  </div>
-                </div>
-                <div className="shrink-0 font-caption text-caption text-secondary text-right">
-                  08-30 08:47
-                </div>
-              </div>
-              <div className="font-caption text-caption text-secondary mt-2 break-all">
-                화면 필기 · 체인 e4d37f18
-              </div>
-            </div>
-
-            <div className="p-4">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="font-body-main text-body-main text-on-surface">④ 감리</div>
-                  <div className="font-caption text-caption text-secondary mt-1">한O중 · 동남감리단</div>
-                </div>
-                <div className="shrink-0 font-caption text-caption text-secondary text-right">
-                  08-30 09:12
-                </div>
-              </div>
-              <div className="font-caption text-caption text-secondary mt-2 break-all">
-                1회용 링크 서명 (계정 없음) · 체인 9af6b3d1
-              </div>
-            </div>
+            ))}
           </div>
         </section>
 
@@ -125,10 +89,10 @@ export default function AttestationCompletePage() {
           </span>
           <div className="min-w-0">
             <p className="font-body-sub text-body-sub font-semibold text-on-secondary-fixed">
-              후행공정 입력이 열렸습니다
+              {doc.nextStage.title}
             </p>
             <p className="font-caption text-caption text-on-secondary-container mt-[2px]">
-              3층 배관 보온 · 마감 작업 등록 가능
+              {doc.nextStage.detail}
             </p>
           </div>
         </section>
@@ -137,22 +101,12 @@ export default function AttestationCompletePage() {
         <section className="flex flex-col gap-card-gap">
           <h2 className="font-section-title text-section-title text-on-surface">회람 이력</h2>
           <div className="card-level-1 p-4 flex flex-col gap-2 font-caption text-caption text-secondary">
-            <div className="flex justify-between gap-3">
-              <span>회람 시작 · 내용 고정</span>
-              <span className="shrink-0">08-29 16:05</span>
-            </div>
-            <div className="flex justify-between gap-3">
-              <span>감리 링크 발송</span>
-              <span className="shrink-0">08-30 08:47</span>
-            </div>
-            <div className="flex justify-between gap-3">
-              <span>감리 문서 열람</span>
-              <span className="shrink-0">08-30 09:03</span>
-            </div>
-            <div className="flex justify-between gap-3">
-              <span>체인 재검증 통과</span>
-              <span className="shrink-0">08-30 09:12</span>
-            </div>
+            {doc.circulation.map(([what, at]) => (
+              <div key={what} className="flex justify-between gap-3">
+                <span>{what}</span>
+                <span className="shrink-0">{at}</span>
+              </div>
+            ))}
           </div>
         </section>
       </main>

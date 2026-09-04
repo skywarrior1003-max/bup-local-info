@@ -1,11 +1,19 @@
 'use client';
 
 import {useParams, useRouter} from 'next/navigation';
+import {getAttestationDoc, type SignState} from '../documents';
+
+const ICON: Record<SignState, {name: string; className: string; fill: string}> = {
+  done: {name: 'check_circle', className: 'text-success', fill: "'FILL' 1"},
+  current: {name: 'radio_button_checked', className: 'text-warning', fill: "'FILL' 1"},
+  waiting: {name: 'radio_button_unchecked', className: 'text-outline', fill: "'FILL' 0"},
+};
 
 export default function AttestationDetailPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
+  const doc = getAttestationDoc(id);
 
   return (
     <div className="app-container">
@@ -14,6 +22,7 @@ export default function AttestationDetailPage() {
         <div className="flex items-center gap-2">
           <button
             aria-label="Go back"
+            onClick={() => router.back()}
             className="text-primary active:scale-95 transition-transform duration-100 flex items-center justify-center p-2 -ml-2"
           >
             <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 0"}}>
@@ -30,14 +39,14 @@ export default function AttestationDetailPage() {
         <section className="card-level-1 p-card-padding flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <span className="bg-secondary-container text-on-secondary-fixed font-caption text-caption font-semibold px-2 py-[3px] rounded">
-              검수검측서
+              {doc.kind}
             </span>
             <span className="font-caption text-caption text-secondary">v1</span>
           </div>
           <div className="font-section-title text-section-title text-on-surface leading-[26px]">
-            3층 소화배관 수압시험 검측서
+            {doc.title}
           </div>
-          <div className="font-caption text-caption text-secondary">동래 A현장 · 2026-08-29</div>
+          <div className="font-caption text-caption text-secondary">{doc.site}</div>
         </section>
 
         {/* ② 내용 고정 안내 */}
@@ -53,7 +62,7 @@ export default function AttestationDetailPage() {
               회람 시작 시각에 내용이 고정되었습니다
             </p>
             <p className="font-caption text-caption text-on-secondary-container mt-[2px] break-all">
-              문서 해시 a3f19c7e2b8d4051 · 08-29 16:05 고정
+              {doc.hashNotice}
             </p>
           </div>
         </section>
@@ -64,111 +73,91 @@ export default function AttestationDetailPage() {
           <div className="card-level-1 p-0 overflow-hidden">
             <table className="w-full text-left border-collapse font-body-sub text-body-sub">
               <tbody className="text-on-surface">
-                <tr className="border-b border-outline-variant">
-                  <td className="py-3 px-4 text-secondary w-[36%]">시험 구간</td>
-                  <td className="py-3 px-4 text-right">3층 스프링클러 주배관</td>
-                </tr>
-                <tr className="border-b border-outline-variant">
-                  <td className="py-3 px-4 text-secondary">시험 압력</td>
-                  <td className="py-3 px-4 text-right">12.0 kgf/cm²</td>
-                </tr>
-                <tr className="border-b border-outline-variant">
-                  <td className="py-3 px-4 text-secondary">유지 시간</td>
-                  <td className="py-3 px-4 text-right">60분</td>
-                </tr>
-                <tr className="border-b border-outline-variant">
-                  <td className="py-3 px-4 text-secondary">압력 강하</td>
-                  <td className="py-3 px-4 text-right">0.0 kgf/cm²</td>
-                </tr>
+                {doc.rows.map(([label, value], i) => (
+                  <tr key={label} className="border-b border-outline-variant">
+                    <td className={`py-3 px-4 text-secondary${i === 0 ? ' w-[36%]' : ''}`}>{label}</td>
+                    <td className="py-3 px-4 text-right">{value}</td>
+                  </tr>
+                ))}
                 <tr>
-                  <td className="py-3 px-4 text-secondary">판정</td>
-                  <td className="py-3 px-4 text-right font-semibold text-success">합격</td>
+                  <td className="py-3 px-4 text-secondary">{doc.verdict[0]}</td>
+                  <td className="py-3 px-4 text-right font-semibold text-success">{doc.verdict[1]}</td>
                 </tr>
               </tbody>
             </table>
-            <div className="border-t border-outline-variant p-4 bg-surface-container-lowest flex items-center justify-between">
-              <span className="font-body-sub text-body-sub text-secondary">첨부 사진 4장</span>
-              <button className="font-caption text-caption text-primary border border-primary px-3 py-1 rounded">
-                전체 보기
-              </button>
-            </div>
+            {doc.attachment && (
+              <div className="border-t border-outline-variant p-4 bg-surface-container-lowest flex items-center justify-between">
+                <span className="font-body-sub text-body-sub text-secondary">{doc.attachment}</span>
+                <button className="font-caption text-caption text-primary border border-primary px-3 py-1 rounded">
+                  전체 보기
+                </button>
+              </div>
+            )}
           </div>
         </section>
 
         {/* ④ 서명 순서 */}
         <section className="flex flex-col gap-card-gap">
           <h2 className="font-section-title text-section-title text-on-surface">서명 순서</h2>
+          {doc.parallelNote && (
+            <p className="font-caption text-caption text-secondary -mt-1">{doc.parallelNote}</p>
+          )}
           <div className="card-level-1 p-0 flex flex-col">
-            <div className="p-4 border-b border-outline-variant flex items-start gap-3">
-              <span
-                className="material-symbols-outlined text-success shrink-0 mt-[2px]"
-                style={{fontVariationSettings: "'FILL' 1"}}
-              >
-                check_circle
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="font-body-main text-body-main text-on-surface">① 시공 팀장</div>
-                <div className="font-caption text-caption text-secondary mt-1">김O수 · ㈜비유피 소방팀</div>
-              </div>
-              <div className="shrink-0 font-caption text-caption text-secondary text-right">
-                08-29
-                <br />
-                14:20
-              </div>
-            </div>
-
-            <div className="p-4 border-b border-outline-variant flex items-start gap-3">
-              <span
-                className="material-symbols-outlined text-success shrink-0 mt-[2px]"
-                style={{fontVariationSettings: "'FILL' 1"}}
-              >
-                check_circle
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="font-body-main text-body-main text-on-surface">② 현장 관리자</div>
-                <div className="font-caption text-caption text-secondary mt-1">윤O태 · ㈜비유피</div>
-              </div>
-              <div className="shrink-0 font-caption text-caption text-secondary text-right">
-                08-29
-                <br />
-                16:05
-              </div>
-            </div>
-
-            <div className="p-4 border-b border-outline-variant bg-secondary-container flex items-start gap-3">
-              <span
-                className="material-symbols-outlined text-warning shrink-0 mt-[2px]"
-                style={{fontVariationSettings: "'FILL' 1"}}
-              >
-                radio_button_checked
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="font-body-main text-body-main font-semibold text-on-surface">
-                  ③ 상위공종 담당자
+            {doc.signers.map((s, i) => {
+              const icon = ICON[s.state];
+              const last = i === doc.signers.length - 1;
+              return (
+                <div
+                  key={s.order}
+                  className={`p-4 flex items-start gap-3${last ? '' : ' border-b border-outline-variant'}${
+                    s.state === 'current' ? ' bg-secondary-container' : ''
+                  }`}
+                >
+                  <span
+                    className={`material-symbols-outlined ${icon.className} shrink-0 mt-[2px]`}
+                    style={{fontVariationSettings: icon.fill}}
+                  >
+                    {icon.name}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div
+                      className={`font-body-main text-body-main ${
+                        s.state === 'current'
+                          ? 'font-semibold text-on-surface'
+                          : s.state === 'waiting'
+                            ? 'text-secondary'
+                            : 'text-on-surface'
+                      }`}
+                    >
+                      {s.order} {s.role}
+                    </div>
+                    <div
+                      className={`font-caption text-caption mt-1 ${
+                        s.state === 'current' ? 'text-on-secondary-container' : 'text-secondary'
+                      }`}
+                    >
+                      {s.person}
+                    </div>
+                    {s.note && (
+                      <div className="font-caption text-caption text-secondary mt-[2px]">{s.note}</div>
+                    )}
+                  </div>
+                  {s.state === 'done' && (
+                    <div className="shrink-0 font-caption text-caption text-secondary text-right">
+                      {s.date}
+                      <br />
+                      {s.time}
+                    </div>
+                  )}
+                  {s.state === 'current' && (
+                    <div className="shrink-0 font-caption text-caption text-warning font-bold">내 차례</div>
+                  )}
+                  {s.state === 'waiting' && (
+                    <div className="shrink-0 font-caption text-caption text-secondary text-right">대기</div>
+                  )}
                 </div>
-                <div className="font-caption text-caption text-on-secondary-container mt-1">
-                  최O석 · 대성종합건설 기계팀
-                </div>
-              </div>
-              <div className="shrink-0 font-caption text-caption text-warning font-bold">내 차례</div>
-            </div>
-
-            <div className="p-4 flex items-start gap-3">
-              <span
-                className="material-symbols-outlined text-outline shrink-0 mt-[2px]"
-                style={{fontVariationSettings: "'FILL' 0"}}
-              >
-                radio_button_unchecked
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="font-body-main text-body-main text-secondary">④ 감리</div>
-                <div className="font-caption text-caption text-secondary mt-1">한O중 · 동남감리단</div>
-                <div className="font-caption text-caption text-secondary mt-[2px]">
-                  계정 없이 링크로 서명
-                </div>
-              </div>
-              <div className="shrink-0 font-caption text-caption text-secondary text-right">대기</div>
-            </div>
+              );
+            })}
           </div>
         </section>
 

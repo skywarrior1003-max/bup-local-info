@@ -12,6 +12,7 @@ export default function AttestationInboxPage() {
         <div className="flex items-center gap-2">
           <button
             aria-label="Go back"
+            onClick={() => router.push('/')}
             className="text-primary active:scale-95 transition-transform duration-100 flex items-center justify-center p-2 -ml-2"
           >
             <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 0"}}>
