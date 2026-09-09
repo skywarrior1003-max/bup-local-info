@@ -220,7 +220,10 @@ export default async function SiteDetailPage({
 
           <div className="flex flex-col gap-3">
             {/* List Item 1 */}
-            <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-card-padding flex items-center justify-between active:bg-surface-container-low cursor-pointer transition-colors shadow-sm">
+            <Link
+              href={`/sites/${id}/statement`}
+              className="bg-surface-container-lowest border border-outline-variant rounded-lg p-card-padding flex items-center justify-between active:bg-surface-container-low cursor-pointer transition-colors shadow-sm"
+            >
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1.5">
                   <span className="bg-error-container text-on-error-container px-2 py-0.5 rounded-md font-caption text-[11px] font-bold border border-error/20">
@@ -231,7 +234,7 @@ export default async function SiteDetailPage({
                 <p className="font-body-main text-body-main font-bold text-on-surface">강관 100A 40본 외 3건 입고</p>
               </div>
               <span className="material-symbols-outlined text-outline ml-2">chevron_right</span>
-            </div>
+            </Link>
 
             {/* List Item 2 */}
             <div className="bg-surface-container-lowest border border-outline-variant rounded-lg p-card-padding flex items-center justify-between active:bg-surface-container-low cursor-pointer transition-colors shadow-sm">
