@@ -37,6 +37,8 @@ npm run build   # 정적 파일이 out/ 에 생성된다
 ## 배포
 
 main에 푸시하면 GitHub Actions가 빌드해서 Cloudflare Pages(`bup-local-info` 프로젝트)로 올린다.
+대표 도메인은 **bupai.net** 이고, bupplatform.com 도 같은 사이트에 연결되어 있다.
+도메인 전환 기록과 되돌리기는 `.github/workflows/domain-*.yml` 에 있다.
 `output: 'export'` 정적 사이트이므로 서버가 필요 없다.
 
 접속 제어는 [functions/_middleware.js](functions/_middleware.js)의 Cloudflare Pages Function이 담당한다.
