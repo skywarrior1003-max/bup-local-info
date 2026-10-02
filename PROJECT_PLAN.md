@@ -82,7 +82,7 @@
 
 - Next.js 16 (App Router) + TypeScript + Tailwind CSS 4
 - `output: 'export'` 정적 사이트 — 서버가 필요 없다
-- Cloudflare Pages 호스팅 (`bup-local-info` 프로젝트, bupplatform.com)
+- Cloudflare Pages 호스팅 (`bup-local-info` 프로젝트, 대표 도메인 bupai.net)
 - main 푸시 → GitHub Actions 빌드 → 자동 배포
 
 ## 현재 단계 — 시연용 목업
