@@ -1,0 +1,27 @@
+name: 도메인 전환 마무리 (bupai.net Worker 경로 삭제)
+
+# bupai.net/* , www.bupai.net/* 를 가로채던 bupai-redirect Worker 경로를 지운다.
+# Worker 스크립트 자체는 남긴다. 되돌리기는 domain-rollback.yml.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  routes:
+    runs-on: ubuntu-latest
+    env:
+      TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - name: 경로 삭제
+        run: |
+          set -euo pipefail
+          api() { curl -s -X "$1" "https://api.cloudflare.com/client/v4$2" -H "Authorization: Bearer $TOKEN"; }
+          ZONE=$(api GET "/zones?name=bupai.net" | jq -r '.result[0].id')
+          api GET "/zones/$ZONE/workers/routes" | jq -r '.result[] | select(.script=="bupai-redirect") | "\(.id) \(.pattern)"' | while read -r id pattern; do
+            api DELETE "/zones/$ZONE/workers/routes/$id" | jq -e '.success' >/dev/null || { echo "실패: $pattern"; exit 1; }
+            echo "삭제: $pattern"
+          done
+          echo "남은 경로:"; api GET "/zones/$ZONE/workers/routes" | jq -r '.result[] | "  \(.pattern) -> \(.script)"'

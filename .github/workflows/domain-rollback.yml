@@ -42,3 +42,8 @@ jobs:
           echo "## Page Rule 복구"
           api POST "/zones/$ZONE/pagerules" '{"targets":[{"target":"url","constraint":{"operator":"matches","value":"*bupai.net/*"}}],"actions":[{"id":"forwarding_url","value":{"url":"https://bupplatform.com/$2","status_code":301}}],"status":"active"}' | must "Page Rule 생성"
           echo "  *bupai.net/* -> https://bupplatform.com/\$2"
+
+          echo "## Worker 경로 복구"
+          for p in "bupai.net/*" "www.bupai.net/*"; do
+            api POST "/zones/$ZONE/workers/routes" "{\"pattern\":\"$p\",\"script\":\"bupai-redirect\"}" | jq -r '"  '"$p"' " + (if .success then "복구" else "건너뜀" end)'
+          done
