@@ -1,0 +1,55 @@
+name: Cloudflare 권한 점검 (읽기 전용)
+
+# 도메인 전환 전에 토큰이 무엇을 볼 수 있는지 확인한다. GET 요청만 보낸다.
+# 공개 저장소이므로 계정 ID·존 ID·토큰 정보는 출력하지 않는다.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: 점검
+        run: |
+          api() { curl -s "https://api.cloudflare.com/client/v4$1" -H "Authorization: Bearer $TOKEN"; }
+          ok()  { jq -r 'if .success then "OK" else "실패: " + ([.errors[]?.message] | join(", ")) end'; }
+
+          echo "## 토큰 상태"
+          echo "user 토큰:    $(api /user/tokens/verify | jq -r '.result.status // ("실패: " + ([.errors[]?.message] | join(", ")))')"
+          echo "account 토큰: $(api /accounts/$ACCOUNT/tokens/verify | jq -r '.result.status // ("실패: " + ([.errors[]?.message] | join(", ")))')"
+
+          for d in bupai.net bupplatform.com; do
+            echo; echo "## $d"
+            ZONE=$(api "/zones?name=$d" | jq -r '.result[0].id // empty')
+            if [ -z "$ZONE" ]; then echo "존 조회: 실패 (권한 없음)"; continue; fi
+            echo "존 조회: OK"
+
+            R=$(api "/zones/$ZONE/dns_records?per_page=100")
+            echo "DNS 읽기: $(echo "$R" | ok)"
+            echo "$R" | jq -r '.result[]? | "  \(.type)\t\(.name)\t\(if .type=="A" or .type=="CNAME" or .type=="AAAA" then .content else "-" end)\tproxied=\(.proxied)"'
+
+            R=$(api "/zones/$ZONE/rulesets/phases/http_request_dynamic_redirect/entrypoint")
+            echo "Redirect Rule 읽기: $(echo "$R" | ok)"
+            echo "$R" | jq -r '.result.rules[]? | "  [\(.enabled)] \(.description // "-")"'
+
+            R=$(api "/zones/$ZONE/workers/routes")
+            echo "Worker 경로 읽기: $(echo "$R" | ok)"
+            echo "$R" | jq -r '.result[]? | "  \(.pattern) -> \(.script // "-")"'
+          done
+
+          echo; echo "## Pages 프로젝트 bup-local-info"
+          R=$(api "/accounts/$ACCOUNT/pages/projects/bup-local-info/domains")
+          echo "연결 도메인 읽기: $(echo "$R" | ok)"
+          echo "$R" | jq -r '.result[]? | "  \(.name)\tstatus=\(.status)"'
+
+          echo; echo "## Workers 스크립트"
+          R=$(api "/accounts/$ACCOUNT/workers/scripts")
+          echo "스크립트 목록 읽기: $(echo "$R" | ok)"
+          echo "$R" | jq -r '.result[]? | "  \(.id)"'
