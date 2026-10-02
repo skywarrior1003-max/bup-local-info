@@ -1,0 +1,62 @@
+name: 도메인 전환 (bupai.net을 실제 사이트로)
+
+# bupai.net / www.bupai.net 을 Pages 프로젝트 bup-local-info 에 직접 연결한다.
+# bupplatform.com 은 건드리지 않는다. 되돌리기는 domain-rollback.yml.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  switch:
+    runs-on: ubuntu-latest
+    env:
+      TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      PROJECT: bup-local-info
+      TARGET: bup-local-info.pages.dev
+    steps:
+      - name: 전환
+        run: |
+          set -euo pipefail
+          api() { curl -s -X "$1" "https://api.cloudflare.com/client/v4$2" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" ${3:+--data "$3"}; }
+          must() { jq -e '.success' >/dev/null || { echo "실패: $1"; exit 1; }; }
+
+          ZONE=$(api GET "/zones?name=bupai.net" | jq -r '.result[0].id')
+
+          echo "## 0. 변경 전 상태 기록"
+          api GET "/zones/$ZONE/pagerules" | jq -c '.result[] | {status, targets, actions, priority}'
+          api GET "/zones/$ZONE/dns_records?per_page=100" | jq -c '.result[] | {type, name, content, proxied}'
+
+          echo "## 1. Pages 연결 등록"
+          for d in bupai.net www.bupai.net; do
+            R=$(api POST "/accounts/$ACCOUNT/pages/projects/$PROJECT/domains" "{\"name\":\"$d\"}")
+            if echo "$R" | jq -e '.success' >/dev/null; then echo "  $d 등록"
+            elif echo "$R" | jq -r '.errors[].message' | grep -qi 'already'; then echo "  $d 이미 등록됨"
+            else echo "$R" | jq -c '.errors'; exit 1; fi
+          done
+
+          echo "## 2. DNS 교체 (A 192.0.2.1 -> CNAME $TARGET)"
+          for d in bupai.net www.bupai.net; do
+            for id in $(api GET "/zones/$ZONE/dns_records?name=$d" | jq -r '.result[] | select(.type=="A" or .type=="AAAA" or .type=="CNAME") | .id'); do
+              api DELETE "/zones/$ZONE/dns_records/$id" | must "$d 기존 레코드 삭제"
+            done
+            api POST "/zones/$ZONE/dns_records" "{\"type\":\"CNAME\",\"name\":\"$d\",\"content\":\"$TARGET\",\"proxied\":true,\"ttl\":1}" | must "$d CNAME 생성"
+            echo "  $d -> $TARGET"
+          done
+
+          echo "## 3. Page Rule 삭제 (bupai.net -> bupplatform.com)"
+          for id in $(api GET "/zones/$ZONE/pagerules" | jq -r '.result[] | select(any(.actions[]; .id=="forwarding_url")) | .id'); do
+            api DELETE "/zones/$ZONE/pagerules/$id" | must "Page Rule 삭제"
+            echo "  삭제"
+          done
+
+          echo "## 4. Pages 활성화 대기 (최대 10분)"
+          for i in $(seq 1 20); do
+            S=$(api GET "/accounts/$ACCOUNT/pages/projects/$PROJECT/domains" | jq -r '[.result[] | select(.name|test("bupai")) | "\(.name)=\(.status)"] | join(" ")')
+            echo "  [$i] $S"
+            echo "$S" | grep -qE '=(pending|initializing|verifying)' || break
+            sleep 30
+          done

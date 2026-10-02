@@ -1,0 +1,44 @@
+name: 도메인 전환 되돌리기
+
+# domain-switch.yml 이전 상태로 복구한다:
+# bupai.net -> bupplatform.com 301 이동 (Page Rule), 임시 A 레코드 192.0.2.1
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    env:
+      TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      PROJECT: bup-local-info
+    steps:
+      - name: 복구
+        run: |
+          set -euo pipefail
+          api() { curl -s -X "$1" "https://api.cloudflare.com/client/v4$2" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" ${3:+--data "$3"}; }
+          must() { jq -e '.success' >/dev/null || { echo "실패: $1"; exit 1; }; }
+
+          ZONE=$(api GET "/zones?name=bupai.net" | jq -r '.result[0].id')
+
+          echo "## Pages 연결 해제"
+          for d in bupai.net www.bupai.net; do
+            api DELETE "/accounts/$ACCOUNT/pages/projects/$PROJECT/domains/$d" | jq -r '"  '"$d"' " + (if .success then "해제" else "건너뜀" end)'
+          done
+
+          echo "## DNS 복구 (A 192.0.2.1)"
+          for d in bupai.net www.bupai.net; do
+            for id in $(api GET "/zones/$ZONE/dns_records?name=$d" | jq -r '.result[] | select(.type=="A" or .type=="AAAA" or .type=="CNAME") | .id'); do
+              api DELETE "/zones/$ZONE/dns_records/$id" | must "$d 레코드 삭제"
+            done
+            api POST "/zones/$ZONE/dns_records" "{\"type\":\"A\",\"name\":\"$d\",\"content\":\"192.0.2.1\",\"proxied\":true,\"ttl\":1}" | must "$d A 생성"
+            echo "  $d 복구"
+          done
+
+          echo "## Page Rule 복구"
+          api POST "/zones/$ZONE/pagerules" '{"targets":[{"target":"url","constraint":{"operator":"matches","value":"*bupai.net/*"}}],"actions":[{"id":"forwarding_url","value":{"url":"https://bupplatform.com/$2","status_code":301}}],"status":"active"}' | must "Page Rule 생성"
+          echo "  *bupai.net/* -> https://bupplatform.com/\$2"
