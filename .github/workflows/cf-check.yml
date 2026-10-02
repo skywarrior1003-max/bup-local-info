@@ -39,6 +39,10 @@ jobs:
             echo "Redirect Rule 읽기: $(echo "$R" | ok)"
             echo "$R" | jq -r '.result.rules[]? | "  [\(.enabled)] \(.description // "-")"'
 
+            R=$(api "/zones/$ZONE/pagerules")
+            echo "Page Rules 읽기: $(echo "$R" | ok)"
+            echo "$R" | jq -r '.result[]? | "  [\(.status)] \([.targets[]?.constraint.value] | join(",")) -> \([.actions[]? | (.value.url? // .value // .id | tostring)] | join(","))"'
+
             R=$(api "/zones/$ZONE/workers/routes")
             echo "Worker 경로 읽기: $(echo "$R" | ok)"
             echo "$R" | jq -r '.result[]? | "  \(.pattern) -> \(.script // "-")"'
