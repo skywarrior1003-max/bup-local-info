@@ -1,0 +1,41 @@
+name: bupai.net Resend 발송 DNS 등록
+
+# Gmail "다른 주소에서 보내기"를 Resend SMTP로 쓰기 위한 레코드.
+# 받기는 Cloudflare 이메일 라우팅(루트 MX)이 맡으므로 루트 MX·SPF 는 건드리지 않는다.
+# 같은 이름·타입이 있으면 값을 덮어쓰고, 없으면 만든다.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dns:
+    runs-on: ubuntu-latest
+    env:
+      TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - name: 레코드 등록
+        run: |
+          set -euo pipefail
+          api() { curl -s -X "$1" "https://api.cloudflare.com/client/v4$2" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" ${3:+--data "$3"}; }
+          ZONE=$(api GET "/zones?name=bupai.net" | jq -r '.result[0].id')
+
+          upsert() {  # type name content
+            local body id
+            body=$(jq -nc --arg t "$1" --arg n "$2" --arg c "$3" '{type:$t, name:$n, content:$c, ttl:1, proxied:false}')
+            id=$(api GET "/zones/$ZONE/dns_records?type=$1&name=$2" | jq -r '.result[0].id // empty')
+            if [ -n "$id" ]; then R=$(api PUT "/zones/$ZONE/dns_records/$id" "$body"); act="갱신"
+            else R=$(api POST "/zones/$ZONE/dns_records" "$body"); act="생성"; fi
+            echo "$R" | jq -e '.success' >/dev/null || { echo "실패: $1 $2 $(echo "$R" | jq -c '.errors')"; exit 1; }
+            echo "  $act  $1  $2"
+          }
+
+          upsert TXT   resend._domainkey.bupai.net 'p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQD9aoCDyNfxbfhOPWgPcB5EeiWwvL0EWnTzueMRzOXG3AuRe8lP3h5LNAMAggXeMIxq37lDjTn5uLDHGAKEKL3/bQeobJoSBzP77ElM6E26v5OGMj/sl7dcb9qU5BM2Vh+6YYpia/aDQFa0xSN0stbmZoxFbtLW/N0yIM4IVrS3VwIDAQAB'
+          upsert CNAME rsend.bupai.net  rsend-apne1.forge.rmta.net
+          upsert CNAME send.bupai.net   send.forge.rmta.net
+          upsert TXT   _dmarc.bupai.net 'v=DMARC1; p=none;'
+
+          echo "## 현재 bupai.net 레코드"
+          api GET "/zones/$ZONE/dns_records?per_page=100" | jq -r '.result[] | "  \(.type)\t\(.name)\t\(.content[0:60])"'
