@@ -161,7 +161,7 @@ function gatePage({ error }) {
 // 앱 코드(/_next/)를 공개하지 않으려고 Next 페이지가 아니라 여기서 HTML을 직접 만든다.
 // 키가 없는 사람이 "/"에 오면 이 페이지를, 그 밖의 경로에서는 gatePage를 보여준다.
 // 메일 수신자가 도메인을 열어봤을 때 실체가 보이도록 검색 허용(index)으로 둔다.
-const CONTACT_EMAIL = "jstar26@bupai.net";
+const CONTACT_EMAIL = "bup@bupai.net";
 
 function landingPage({ error }) {
   return `<!DOCTYPE html>
